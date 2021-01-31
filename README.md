@@ -4,7 +4,7 @@ Watch app for ski resort forecast
 
 ## Configuration:
 
-Go to [weatherunlocked.com](https://weatherunlocked.com) and register for an account, you should have a key ready of type `Ski Resort Free Plan` ready to use. Select a ski resort of your choice, copy over the App ID, App Key and the Resort ID (Number next to name!) over to your phone, paste it in the Pebble app configuration page.
+Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an account, you should have a key ready of type `Ski Resort Free Plan` ready to use. Select a ski resort of your choice, copy over the App ID, App Key and the Resort ID (Number next to name!) over to your phone, paste it in the Pebble app configuration page.
 
 ![](https://i.imgur.com/xPtGpGe.png)
 
@@ -27,4 +27,4 @@ Go to [weatherunlocked.com](https://weatherunlocked.com) and register for an acc
 
 ## Icons
 
-Icons by [weatherunlocked.com](https://weatherunlocked.com)
+Icons by [weatherunlocked.com](developer.weatherunlocked.com)
