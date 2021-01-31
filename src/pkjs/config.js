@@ -45,6 +45,22 @@ module.exports = [
 				"step": 1
 			},
 			{
+				"type": "radiogroup",
+				"appKey": "units",
+				"label": "Metric or Imperial",
+				"defaultValue": "metric",
+				"options": [
+					{
+						"label": "Metric",
+						"value": "metric"
+					},
+					{
+						"label": "Imperial",
+						"value": "imperial"
+					},
+				]
+			},
+			{
 				"type": "submit",
 				"defaultValue": "Save"
 			}

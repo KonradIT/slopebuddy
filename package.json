@@ -27,7 +27,8 @@
             "apikey",
             "apiid",
             "resortid",
-            "daystoshow"
+            "daystoshow",
+            "units"
         ],
         "resources": {
             "media": [
@@ -275,6 +276,11 @@
                 {
                     "file": "images/mist.png",
                     "name": "mist",
+                    "type": "png"
+                },
+                {
+                    "file": "images/timelineicon.png",
+                    "name": "timelineicon",
                     "type": "png"
                 }
             ]

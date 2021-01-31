@@ -11,15 +11,151 @@ Pebble.addEventListener("ready", function () {
     var clayConfig = require('./config');
     var clay = new Clay(clayConfig, null, { autoHandleEvents: false });
 
-    /*
-    const DISTANCE_SMALL_CM = "cm"
-    const DISTANCE_SMALL_IN = "in"
-    const DISTANCE_LARGE_KM = "km"
-    const DISTANCE_LARGE_MI = "km"
-    const TEMP_C = "C"
-    const TEMP_C = "F"
+    var metric = "metric"
+    var imperial = "imperial"
+    const units = {
+        DISTANCE_SMALL: "DISTANCE_SMALL",
+        DISTANCE_LARGE: "DISTANCE_LARGE",
+        ACCUMULATION: "ACCUMULATION",
+        TEMPERATURE: "TEMPERATURE",
+        SPEED: "SPEED",
+    }
+    var timelineicons = {
+        "Blizzard": "CLOUDY_DAY",
+        "Clear": "TIMELINE_SUN",
+        "CloudRainThunder": "HEAVY_RAIN",
+        "CloudSleetSnowThunder": "RAINING_AND_SNOWING",
+        "Cloudy": "PARTLY_CLOUDY",
+        "Fog": "CLOUDY_DAY",
+        "FreezingDrizzle": "LIGHT_RAIN",
+        "FreezingFog": "CLOUDY_DAY",
+        "FreezingRain": "HEAVY_RAIN",
+        "HeavyRain": "HEAVY_RAIN",
+        "HeavyRainSwrsDay": "HEAVY_RAIN",
+        "HeavyRainSwrsNight": "HEAVY_RAIN",
+        "HeavySleet": "HEAVY_RAIN",
+        "HeavySleetSwrsDay": "HEAVY_RAIN",
+        "HeavySleetSwrsNight": "HEAVY_RAIN",
+        "HeavySnow": "HEAVY_SNOW",
+        "HeavySnowSwrsDay": "HEAVY_SNOW",
+        "HeavySnowSwrsNight": "HEAVY_SNOW",
+        "IsoRainSwrsDay": "LIGHT_RAIN",
+        "IsoRainSwrsNight": "LIGHT_RAIN",
+        "IsoSleetSwrsDay": "LIGHT_RAIN",
+        "IsoSleetSwrsNight": "LIGHT_RAIN",
+        "IsoSnowSwrsDay": "LIGHT_SNOW",
+        "IsoSnowSwrsNight": "LIGHT_SNOW",
+        "ModRain": "LIGHT_RAIN",
+        "ModRainSwrsDay": "LIGHT_RAIN",
+        "ModRainSwrsNight": "LIGHT_RAIN",
+        "ModSleet": "LIGHT_RAIN",
+        "ModSleetSwrsDay": "LIGHT_RAIN",
+        "ModSleetSwrsNight": "LIGHT_RAIN",
+        "ModSnow": "LIGHT_SNOW",
+        "ModSnowSwrsDay": "LIGHT_SNOW",
+        "ModSnowSwrsNight": "LIGHT_SNOW",
+        "OccLightRain": "LIGHT_RAIN",
+        "OccLightSleet": "LIGHT_RAIN",
+        "OccLightSnow": "LIGHT_SNOW",
+        "Overcast": "CLOUDY_DAY",
+        "PartCloudRainThunderDay": "HEAVY_RAIN",
+        "PartCloudRainThunderNight": "LIGHT_RAIN",
+        "PartCloudSleetSnowThunderDay": "LIGHT_SNOW",
+        "PartCloudSleetSnowThunderNight": "LIGHT_SNOW",
+        "PartlyCloudyDay": "PARTLY_CLOUDY",
+        "PartlyCloudyNight": "PARTLY_CLOUDY",
+        "Sunny": "TIMELINE_SUN",
+        "mist": "CLOUDY_DAY"
+    }
+    const tags = {
+        FRESH_SNOW: {
+            [metric]: "freshsnow_cm",
+            [imperial]: "freshsnow_in"
+        },
+        VISIBILITY: {
+            [metric]: "vis_km",
+            [imperial]: "vis_mi"
+        },
+        PRECIPITATION: {
+            [metric]: "precip_mm",
+            [imperial]: "precip_in"
+        },
+        SNOW: {
+            [metric]: "snow_mm",
+            [imperial]: "snow_in"
+        },
+        RAIN: {
+            [metric]: "rain_mm",
+            [imperial]: "rain_in"
+        },
+        TEMP_AVG: {
+            [metric]: "temp_avg_c",
+            [imperial]: "temp_avg_f"
+        },
+        TEMP_MAX: {
+            [metric]: "temp_max_c",
+            [imperial]: "temp_max_f"
+        },
+        TEMP_MIN: {
+            [metric]: "temp_min_c",
+            [imperial]: "temp_min_f"
+        },
+        FEELSLIKE: {
+            [metric]: "feelslike_c",
+            [imperial]: "feelslike_f"
+        },
+        WINDPSEED: {
+            [metric]: "windspd_kmh",
+            [imperial]: "windspd_mph"
+        },
+        WINDGUST: {
+            [metric]: "windgst_kmh",
+            [imperial]: "windgst_mph"
+        }
+    }
 
-    */
+    function getunits(unit) {
+        selection = Settings.option('units') || metric
+        switch (unit) {
+            case units.DISTANCE_SMALL:
+                if (selection == imperial)
+                    return "in"
+                if (selection == metric)
+                    return "cm"
+                break
+            case units.DISTANCE_LARGE:
+                if (selection == imperial)
+                    return "mi"
+                if (selection == metric)
+                    return "km"
+                break
+            case units.ACCUMULATION:
+                if (selection == imperial)
+                    return "in"
+                if (selection == metric)
+                    return "mm"
+                break
+            case units.TEMPERATURE:
+                if (selection == imperial)
+                    return "°F"
+                if (selection == metric)
+                    return "°C"
+                break
+            case units.SPEED:
+                if (selection == imperial)
+                    return "m/h"
+                if (selection == metric)
+                    return "km/h"
+                break
+            default: return ""
+        }
+        return ""
+    }
+    function getdatatags(tag) {
+        selection = Settings.option('units') || metric
+        return tag[selection]
+    }
+
     function makesections(array) {
         sections = [{
             title: "Resort"
@@ -35,39 +171,39 @@ Pebble.addEventListener("ready", function () {
     function getdata(snow, vis, rain, precip, hum, ob) {
         ret = []
 
-        if (ob["freshsnow_cm"] != null) {
+        if (ob[getdatatags(tags.FRESH_SNOW)] != null) {
             ret.push({
                 title: "Fresh snow",
-                subtitle: ob["freshsnow_cm"] + " cm"
+                subtitle: ob[getdatatags(tags.FRESH_SNOW)] + " " + getunits(units.DISTANCE_SMALL)
             })
         }
         ret.push({
             title: "Visibility",
-            subtitle: vis + " km"
+            subtitle: vis + " " + getunits(units.DISTANCE_LARGE)
         })
         ret.push({
             title: "Precipitation",
-            subtitle: precip + " cm"
+            subtitle: precip + " " + getunits(units.ACCUMULATION)
         })
         ret.push({
             title: "Snow/Rain",
-            subtitle: snow + " cm | " + rain + " cm"
+            subtitle: snow + " " + getunits(units.ACCUMULATION) + " | " + rain + " " + getunits(units.ACCUMULATION)
         })
         ret.push({
             title: "Humidity",
             subtitle: hum + "%"
         })
 
-        if (ob["temp_avg_c"] != null) {
+        if (ob[getdatatags(tags.TEMP_AVG)] != null) {
             ret.push({
                 title: "Temperature",
-                subtitle: ob["temp_avg_c"] + " C" + " (" + ob["temp_max_c"] + " C / " + ob["temp_min_c"] + " C )"
+                subtitle: ob[getdatatags(tags.TEMP_AVG)] + " " + getunits(units.TEMPERATURE) + " (" + ob[getdatatags(tags.TEMP_MAX)] + " " + getunits(units.TEMPERATURE) + " / " + ob[getdatatags(tags.TEMP_MIN)] + " " + getunits(units.TEMPERATURE) + " )"
             })
         }
-        if (ob["feelslike_c"] != null) {
+        if (ob[getdatatags(tags.FEELSLIKE)] != null) {
             ret.push({
                 title: "Feels like",
-                subtitle: ob["feelslike_c"] + " C"
+                subtitle: ob[getdatatags(tags.FEELSLIKE)] + " " + getunits(units.TEMPERATURE)
             })
         }
         if (ob["winddir_deg"] != null) {
@@ -76,25 +212,102 @@ Pebble.addEventListener("ready", function () {
                 subtitle: ob["winddir_deg"] + " deg (" + ob["winddir_compass"] + ")"
             })
         }
-        if (ob["windspd_kmh"] != null) {
+        if (ob[getdatatags(tags.WINDPSEED)] != null) {
             ret.push({
                 title: "Windspeed",
-                subtitle: ob["windspd_kmh"] + " km/h"
+                subtitle: ob[getdatatags(tags.WINDPSEED)] + " " + getunits(units.SPEED)
             })
         }
-        if (ob["windgst_kmh"] != null) {
+        if (ob[getdatatags(tags.WINDGUST)] != null) {
             ret.push({
                 title: "Wind gust",
-                subtitle: ob["windgst_kmh"] + " km/h"
+                subtitle: ob[getdatatags(tags.WINDGUST)] + " " + getunits(units.SPEED)
             })
         }
-
-
         return [
             { items: ret }
         ]
     }
 
+    function makedesc(data) {
+        // [0]["items"].join('\n')
+        ret = ""
+        for (var i = 0, len = data[0]["items"].length; i < len; ++i) {
+            var item = data[0]["items"][i];
+            ret = ret + item["title"] + ": " + item["subtitle"] + "\n"
+        }
+        return ret
+    }
+    function pushnextday() {
+
+        // STILL WIP
+        Pebble.getTimelineToken(function (token) {
+            var xhr = new XMLHttpRequest()
+            var pinid = "slopebuddy-" + "0002"
+            xhr.open("PUT", "https://timeline-api.rebble.io/v1/user/pins/" + pinid, true)
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("X-User-Token", token);
+
+            var pinobject = {
+                "id": pinid,
+                "time": "2021-02-02T18:00:00Z",
+                "duration": 60,
+                "layout": {
+                    "type": "weatherPin",
+                    "title": "Snow time!",
+                    "subtitle": "nada", // item["base"][getdatatags(tags.TEMP_MAX)] + "/" + item["base"][getdatatags(tags.TEMP_MIN)],
+                    "tinyIcon": "system://images/" + "HEAVY_SNOW",
+                    "largeIcon": "system://images/" + "HEAVY_SNOW",
+                    "locationName": "Madrid",
+                    "body": "description"
+                },
+                "actions": [
+                    {
+                        "title": "View base snow conditions",
+                        "type": "openWatchApp",
+                        "launchCode": 22
+                    }
+                ]
+            }
+            xhr.onload = function () {
+                if (xhr.readyState === xhr.DONE) {
+                    if (xhr.status === 200) {
+                        var ok = new UI.Card({
+                            title: "Request ok",
+                            body: xhr.responseText,
+                            subtitleColor: "indigo",
+                            bodyColor: Feature.color("cyan", "white"),
+                            titleColor: "white",
+                            backgroundColor: "black"
+                        });
+                        ok.show();
+                        Pebble.showSimpleNotificationOnPebble("Pins pushed!", "Might take a while for the pins to arrive in your timeline, sit tight, have a beer, and get ready for a day of shredding!");
+                    } else {
+                        var error = new UI.Card({
+                            title: "Request failed",
+                            body: "Status code " + xhr.statusText + "\n" + xhr.responseText.substring(10),
+                            subtitleColor: "indigo",
+                            bodyColor: Feature.color("cyan", "white"),
+                            titleColor: "white",
+                            backgroundColor: "black"
+                        });
+                        error.show();
+                    }
+                }
+            }
+            xhr.send(JSON.stringify(pinobject))
+        }, function (error) {
+            var errorcard = new UI.Card({
+                title: "Getting timeline token error",
+                body: "Error getting timeline token",
+                subtitleColor: "indigo",
+                bodyColor: Feature.color("cyan", "white"),
+                titleColor: "white",
+                backgroundColor: "black"
+            });
+            errorcard.show();
+        });
+    }
 
     function loaddata() {
         var xhr = new XMLHttpRequest()
@@ -184,7 +397,7 @@ Pebble.addEventListener("ready", function () {
             for (var i = 0, len = value.length; i < len; ++i) {
                 item = value[i];
                 forecast.item(index + 1, i, {
-                    title: item["time"], icon: "images/" + item["base"]["wx_icon"].replace(".gif", ".png"), subtitle: "S: " + item["snow_mm"] + "mm V:" + item["vis_km"] + " km"
+                    title: item["time"], icon: "images/" + item["base"]["wx_icon"].replace(".gif", ".png"), subtitle: "S: " + item[getdatatags(tags.SNOW)] + " " + getunits(units.ACCUMULATION) + " V:" + item[getdatatags(tags.VISIBILITY)] + " " + getunits(units.DISTANCE_LARGE)
                 });
             }
         });
@@ -192,11 +405,18 @@ Pebble.addEventListener("ready", function () {
             if (e.sectionIndex == 0) {
                 var resortinfo = new UI.Card({
                     title: "Resort info",
-                    body: "Name " + obj["name"],
+                    body: "Name: " + obj["name"],
                     subtitleColor: "indigo",
                     bodyColor: Feature.color("cyan", "white"),
                     titleColor: "white",
-                    backgroundColor: "black"
+                    backgroundColor: "black",
+                    action: {
+                        select: 'images/timelineicon.png',
+                        backgroundColor: "white"
+                    }
+                });
+                resortinfo.on('click', 'select', function () {
+                    pushnextday();
                 });
                 resortinfo.show();
             } else {
@@ -238,7 +458,7 @@ Pebble.addEventListener("ready", function () {
                     }
                     var seshinfo = new UI.Menu({
                         title: item[showdatafrom]["wx_desc"],
-                        sections: getdata(item["snow_mm"], item["vis_km"], item["rain_mm"], item["precip_mm"], item["hum_pct"], item[showdatafrom]),
+                        sections: getdata(item[getdatatags(tags.SNOW)], item[getdatatags(tags.VISIBILITY)], item[getdatatags(tags.RAIN)], item[getdatatags(tags.PRECIPITATION)], item["hum_pct"], item[showdatafrom]),
                         textColor: "white",
                         backgroundColor: "black",
                         highlightTextColor: "black",
