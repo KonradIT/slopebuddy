@@ -1,0 +1,283 @@
+{
+    "name": "Slope Buddy",
+    "author": "Konrad Iturbe",
+    "version": "0.1.0",
+    "keywords": [
+        "pebble-app"
+    ],
+    "private": true,
+    "dependencies": {
+        "pebblejs": "^1.0.0"
+    },
+    "pebble": {
+        "displayName": "Slope Buddy",
+        "uuid": "0f5a2d06-f3d2-4f0b-a737-63d6eb806a87",
+        "sdkVersion": "3",
+        "enableMultiJS": true,
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite"
+        ],
+        "watchapp": {
+            "watchface": false
+        },
+        "messageKeys": [
+            "apikey",
+            "apiid",
+            "resortid",
+            "daystoshow"
+        ],
+        "resources": {
+            "media": [
+                {
+                    "file": "images/app_icon.png",
+                    "menuIcon": true,
+                    "name": "IMAGES_APP_ICON",
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/logo_splash.png",
+                    "name": "IMAGE_LOGO_SPLASH",
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/tile_splash.png",
+                    "name": "IMAGE_TILE_SPLASH",
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/UbuntuMono-Regular.ttf",
+                    "name": "MONO_FONT_14",
+                    "type": "font"
+                },
+                {
+                    "file": "images/Blizzard.png",
+                    "name": "Blizzard",
+                    "type": "png"
+                },
+                {
+                    "file": "images/Clear.png",
+                    "name": "Clear",
+                    "type": "png"
+                },
+                {
+                    "file": "images/CloudRainThunder.png",
+                    "name": "CloudRainThunder",
+                    "type": "png"
+                },
+                {
+                    "file": "images/CloudSleetSnowThunder.png",
+                    "name": "CloudSleetSnowThunder",
+                    "type": "png"
+                },
+                {
+                    "file": "images/Cloudy.png",
+                    "name": "Cloudy",
+                    "type": "png"
+                },
+                {
+                    "file": "images/Fog.png",
+                    "name": "Fog",
+                    "type": "png"
+                },
+                {
+                    "file": "images/FreezingDrizzle.png",
+                    "name": "FreezingDrizzle",
+                    "type": "png"
+                },
+                {
+                    "file": "images/FreezingFog.png",
+                    "name": "FreezingFog",
+                    "type": "png"
+                },
+                {
+                    "file": "images/FreezingRain.png",
+                    "name": "FreezingRain",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavyRain.png",
+                    "name": "HeavyRain",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavyRainSwrsDay.png",
+                    "name": "HeavyRainSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavyRainSwrsNight.png",
+                    "name": "HeavyRainSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySleet.png",
+                    "name": "HeavySleet",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySleetSwrsDay.png",
+                    "name": "HeavySleetSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySleetSwrsNight.png",
+                    "name": "HeavySleetSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySnow.png",
+                    "name": "HeavySnow",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySnowSwrsDay.png",
+                    "name": "HeavySnowSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/HeavySnowSwrsNight.png",
+                    "name": "HeavySnowSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoRainSwrsDay.png",
+                    "name": "IsoRainSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoRainSwrsNight.png",
+                    "name": "IsoRainSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoSleetSwrsDay.png",
+                    "name": "IsoSleetSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoSleetSwrsNight.png",
+                    "name": "IsoSleetSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoSnowSwrsDay.png",
+                    "name": "IsoSnowSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/IsoSnowSwrsNight.png",
+                    "name": "IsoSnowSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModRain.png",
+                    "name": "ModRain",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModRainSwrsDay.png",
+                    "name": "ModRainSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModRainSwrsNight.png",
+                    "name": "ModRainSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSleet.png",
+                    "name": "ModSleet",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSleetSwrsDay.png",
+                    "name": "ModSleetSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSleetSwrsNight.png",
+                    "name": "ModSleetSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSnow.png",
+                    "name": "ModSnow",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSnowSwrsDay.png",
+                    "name": "ModSnowSwrsDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/ModSnowSwrsNight.png",
+                    "name": "ModSnowSwrsNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/OccLightRain.png",
+                    "name": "OccLightRain",
+                    "type": "png"
+                },
+                {
+                    "file": "images/OccLightSleet.png",
+                    "name": "OccLightSleet",
+                    "type": "png"
+                },
+                {
+                    "file": "images/OccLightSnow.png",
+                    "name": "OccLightSnow",
+                    "type": "png"
+                },
+                {
+                    "file": "images/Overcast.png",
+                    "name": "Overcast",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartCloudRainThunderDay.png",
+                    "name": "PartCloudRainThunderDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartCloudRainThunderNight.png",
+                    "name": "PartCloudRainThunderNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartCloudSleetSnowThunderDay.png",
+                    "name": "PartCloudSleetSnowThunderDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartCloudSleetSnowThunderNight.png",
+                    "name": "PartCloudSleetSnowThunderNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartlyCloudyDay.png",
+                    "name": "PartlyCloudyDay",
+                    "type": "png"
+                },
+                {
+                    "file": "images/PartlyCloudyNight.png",
+                    "name": "PartlyCloudyNight",
+                    "type": "png"
+                },
+                {
+                    "file": "images/Sunny.png",
+                    "name": "Sunny",
+                    "type": "png"
+                },
+                {
+                    "file": "images/mist.png",
+                    "name": "mist",
+                    "type": "png"
+                }
+            ]
+        }
+    }
+}

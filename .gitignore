@@ -1,0 +1,5 @@
+node_resources/
+.lock-waf_linux2_build
+temporary/
+node_modules/
+build/
