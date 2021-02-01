@@ -61,6 +61,31 @@ module.exports = [
 				]
 			},
 			{
+				"type": "select",
+				"appKey": "trackpoint",
+				"defaultValue": "upper",
+				"label": "Default point on piste",
+				"description": "For use in timeline",
+				"options": [
+
+					{
+						"label": "Base",
+						"value": "base"
+					},
+					{
+						"label": "Mid",
+						"value": "mid"
+					},
+					{
+						"label": "Upper",
+						"value": "upper"
+					}
+				],
+				"attributes": {
+					"required": "required"
+				}
+			},
+			{
 				"type": "submit",
 				"defaultValue": "Save"
 			}

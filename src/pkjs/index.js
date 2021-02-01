@@ -65,7 +65,9 @@ Pebble.addEventListener("ready", function () {
         "PartlyCloudyDay": "PARTLY_CLOUDY",
         "PartlyCloudyNight": "PARTLY_CLOUDY",
         "Sunny": "TIMELINE_SUN",
-        "mist": "CLOUDY_DAY"
+        "mist": "CLOUDY_DAY",
+        "Mist": "CLOUDY_DAY"
+
     }
     const tags = {
         FRESH_SNOW: {
@@ -168,6 +170,12 @@ Pebble.addEventListener("ready", function () {
         return sections
     }
 
+    function getdefaultpoint() {
+        if (typeof Settings.option("trackpoint") == "undefined") {
+            return "upper"
+        }
+        return Settings.option("trackpoint")
+    }
     function getdata(snow, vis, rain, precip, hum, ob) {
         ret = []
 
@@ -238,28 +246,28 @@ Pebble.addEventListener("ready", function () {
         }
         return ret
     }
-    function pushnextday() {
-
-        // STILL WIP
+    function pushpin(item, location, callback) {
         Pebble.getTimelineToken(function (token) {
             var xhr = new XMLHttpRequest()
-            var pinid = "slopebuddy-" + "0002"
+            var pinid = "slopebuddy-" + item["date"].replace(/\//g, "_") + "-" + item["time"].replace(":", "")
             xhr.open("PUT", "https://timeline-api.rebble.io/v1/user/pins/" + pinid, true)
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.setRequestHeader("X-User-Token", token);
+            pintime = item["date"].split("/")[2] + "-" + item["date"].split("/")[1] + "-" + item["date"].split("/")[1]
+            icon = timelineicons[item[getdefaultpoint()]["wx_icon"].replace(".gif", "")] !== undefined ? timelineicons[item[getdefaultpoint()]["wx_icon"].replace(".gif", "")] : "TIMELINE_SUN"
 
             var pinobject = {
                 "id": pinid,
-                "time": "2021-02-02T18:00:00Z",
+                "time": pintime + "T" + item["time"] + ":00Z",
                 "duration": 60,
                 "layout": {
                     "type": "weatherPin",
-                    "title": "Snow time!",
-                    "subtitle": "nada", // item["base"][getdatatags(tags.TEMP_MAX)] + "/" + item["base"][getdatatags(tags.TEMP_MIN)],
-                    "tinyIcon": "system://images/" + "HEAVY_SNOW",
-                    "largeIcon": "system://images/" + "HEAVY_SNOW",
-                    "locationName": "Madrid",
-                    "body": "description"
+                    "title": item[getdefaultpoint()]["wx_desc"],
+                    "subtitle": item[getdefaultpoint()][getdatatags(tags.TEMP_MAX)] + "/" + item[getdefaultpoint()][getdatatags(tags.TEMP_MIN)],
+                    "tinyIcon": "system://images/" + icon,
+                    "largeIcon": "system://images/" + icon,
+                    "locationName": location,
+                    "body": makedesc(getdata(item[getdatatags(tags.SNOW)], item[getdatatags(tags.VISIBILITY)], item[getdatatags(tags.RAIN)], item[getdatatags(tags.PRECIPITATION)], item["hum_pct"], item[getdefaultpoint()]))
                 },
                 "actions": [
                     {
@@ -272,41 +280,68 @@ Pebble.addEventListener("ready", function () {
             xhr.onload = function () {
                 if (xhr.readyState === xhr.DONE) {
                     if (xhr.status === 200) {
-                        var ok = new UI.Card({
-                            title: "Request ok",
-                            body: xhr.responseText,
-                            subtitleColor: "indigo",
-                            bodyColor: Feature.color("cyan", "white"),
-                            titleColor: "white",
-                            backgroundColor: "black"
-                        });
-                        ok.show();
-                        Pebble.showSimpleNotificationOnPebble("Pins pushed!", "Might take a while for the pins to arrive in your timeline, sit tight, have a beer, and get ready for a day of shredding!");
+                        callback("ok", item["time"])
                     } else {
-                        var error = new UI.Card({
-                            title: "Request failed",
-                            body: "Status code " + xhr.statusText + "\n" + xhr.responseText.substring(10),
-                            subtitleColor: "indigo",
-                            bodyColor: Feature.color("cyan", "white"),
-                            titleColor: "white",
-                            backgroundColor: "black"
-                        });
-                        error.show();
+                        callback("error: " + xhr.responseText.toString(), item["time"])
                     }
                 }
             }
             xhr.send(JSON.stringify(pinobject))
         }, function (error) {
-            var errorcard = new UI.Card({
-                title: "Getting timeline token error",
-                body: "Error getting timeline token",
-                subtitleColor: "indigo",
-                bodyColor: Feature.color("cyan", "white"),
-                titleColor: "white",
-                backgroundColor: "black"
-            });
-            errorcard.show();
+            callback("error", "")
         });
+    }
+    function pushnextday() {
+
+        // STILL WIP
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "https://api.weatherunlocked.com/api/resortforecast/" + Settings.option('resortid') + "?app_id=" + Settings.option('apiid') + "&app_key=" + Settings.option('apikey') + "&hourly_interval=6&num_of_days=2", true)
+        xhr.setRequestHeader("Accept", "application/json");
+
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE) {
+                if (xhr.status === 200) {
+                    var obj = JSON.parse(xhr.responseText)
+                    forecastitems = {}
+                    for (var i = 0, len = obj["forecast"].length; i < len; ++i) {
+                        var item = obj["forecast"][i];
+                        if (item["date"] in forecastitems) {
+                            forecastitems[item["date"]].push(item)
+                        } else {
+                            forecastitems[item["date"]] = [item]
+                        }
+                    }
+                    Object.entries(forecastitems).forEach(([key, value], index) => {
+                        for (var i = 0, len = value.length; i < len; ++i) {
+                            if (index == 0) {
+                                continue
+                            }
+                            item = value[i];
+
+                            pushpin(item, obj["name"], function (e, time) {
+                                if (e == "ok") {
+                                    if (time == "19:00") {
+                                        Pebble.showSimpleNotificationOnPebble("Pins pushed!", "Might take a while for the pins to arrive in your timeline, sit tight, have a beer, and get ready for a day of shredding!");
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                } else {
+                    var error = new UI.Card({
+                        title: "Request failed",
+                        body: "Status code " + xhr.statusText + "\n" + xhr.responseText.substring(10),
+                        subtitleColor: "indigo",
+                        bodyColor: Feature.color("cyan", "white"),
+                        titleColor: "white",
+                        backgroundColor: "black"
+                    });
+                    error.show();
+                }
+            }
+        }
+        xhr.send(null)
     }
 
     function loaddata() {
@@ -321,7 +356,7 @@ Pebble.addEventListener("ready", function () {
                 } else {
                     var error = new UI.Card({
                         title: "Request failed",
-                        body: "Status code " + xhr.statusText + "\n" + xhr.responseText.substring(10),
+                        body: "Status code " + xhr.statusText.toString() + "\n" + xhr.responseText.substring(10),
                         subtitleColor: "indigo",
                         bodyColor: Feature.color("cyan", "white"),
                         titleColor: "white",
@@ -397,7 +432,7 @@ Pebble.addEventListener("ready", function () {
             for (var i = 0, len = value.length; i < len; ++i) {
                 item = value[i];
                 forecast.item(index + 1, i, {
-                    title: item["time"], icon: "images/" + item["base"]["wx_icon"].replace(".gif", ".png"), subtitle: "S: " + item[getdatatags(tags.SNOW)] + " " + getunits(units.ACCUMULATION) + " V:" + item[getdatatags(tags.VISIBILITY)] + " " + getunits(units.DISTANCE_LARGE)
+                    title: item["time"], icon: "images/" + item[getdefaultpoint()]["wx_icon"].replace(".gif", ".png"), subtitle: "S: " + item[getdatatags(tags.SNOW)] + " " + getunits(units.ACCUMULATION) + " V:" + item[getdatatags(tags.VISIBILITY)] + " " + getunits(units.DISTANCE_LARGE)
                 });
             }
         });

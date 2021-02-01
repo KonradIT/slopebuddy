@@ -8,6 +8,12 @@ Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an a
 
 ![](https://i.imgur.com/xPtGpGe.png)
 
+## Watch app:
+
+| Main screen                                           | Detailed view                                         |
+| ----------------------------------------------------- | ----------------------------------------------------- |
+| ![](assets/pebble_screenshot_2021-02-01_09-05-28.png) | ![](assets/pebble_screenshot_2021-02-01_09-06-20.png) |
+
 ## Supported watches:
 
 -   Pebble Classic
@@ -19,11 +25,11 @@ Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an a
 
 # To-do:
 
--   Timeline support: push next day to timeline
--   Glances: push next hour to glance (let user select which data to push)
--   Select between imperial and metric (metric is now hard coded)
--   Look for API which serves Lift status
--   Testing with Pebble Steel and Pebble Time Round
+-   [x] Timeline support: push next day to timeline
+-   [ ] Glances: push next hour to glance (let user select which data to push)
+-   [x] Select between imperial and metric (metric is now hard coded)
+-   [ ] Look for API which serves Lift status (liftie.io ?)
+-   [ ] Testing with Pebble Steel and Pebble Time Round
 
 ## Icons
 
