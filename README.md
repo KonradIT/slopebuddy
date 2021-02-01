@@ -16,11 +16,11 @@ Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an a
 
 ## Supported watches:
 
--   Pebble Classic
+-   Pebble Classic (untested)
 -   Pebble Steel
 -   Pebble Time
 -   Pebble Time Steel
--   Pebble Time Round
+-   Pebble Time Round (untested)
 -   Pebble 2
 
 # To-do:
@@ -29,7 +29,7 @@ Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an a
 -   [ ] Glances: push next hour to glance (let user select which data to push)
 -   [x] Select between imperial and metric (metric is now hard coded)
 -   [ ] Look for API which serves Lift status (liftie.io ?)
--   [ ] Testing with Pebble Steel and Pebble Time Round
+-   [x] Testing with Pebble Steel and Pebble Time 2
 
 ## Icons
 

@@ -423,7 +423,7 @@ Pebble.addEventListener("ready", function () {
         var forecast = new UI.Menu({
             backgroundColor: "black",
             textColor: "white",
-            highlightBackgroundColor: Feature.color('cyan', 'black'),
+            highlightBackgroundColor: Feature.color('cyan', 'white'),
             highlightTextColor: "black",
             sections: makesections(Object.keys(forecastitems))
         });
@@ -460,7 +460,7 @@ Pebble.addEventListener("ready", function () {
                 var forecastmenu = new UI.Menu({
                     backgroundColor: "black",
                     textColor: "white",
-                    highlightBackgroundColor: Feature.color("cyan", "black"),
+                    highlightBackgroundColor: Feature.color("cyan", "white"),
                     highlightTextColor: "black",
                     sections: [{
                         items: [{
@@ -497,7 +497,7 @@ Pebble.addEventListener("ready", function () {
                         textColor: "white",
                         backgroundColor: "black",
                         highlightTextColor: "black",
-                        highlightBackgroundColor: Feature.color("cyan", "black"),
+                        highlightBackgroundColor: Feature.color("cyan", "white"),
                         fullscreen: true
                     });
                     seshinfo.show();
