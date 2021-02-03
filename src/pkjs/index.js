@@ -11,6 +11,9 @@ Pebble.addEventListener("ready", function () {
     var clayConfig = require('./config');
     var clay = new Clay(clayConfig, null, { autoHandleEvents: false });
 
+    var dayjs = require("dayjs")
+    customParseFormat = require('dayjs/plugin/customParseFormat')
+
     var metric = "metric"
     var imperial = "imperial"
     const units = {
@@ -249,16 +252,18 @@ Pebble.addEventListener("ready", function () {
     function pushpin(item, location, callback) {
         Pebble.getTimelineToken(function (token) {
             var xhr = new XMLHttpRequest()
-            var pinid = "slopebuddy-" + item["date"].replace(/\//g, "_") + "-" + item["time"].replace(":", "")
+            dayjs.extend(customParseFormat)
+            dayfixed = dayjs(item["time"], "HH:mm").subtract(1, "hour")
+            var pinid = "slopebuddy-" + item["date"].replace(/\//g, "_") + "-" + dayfixed.format("HHmm")
             xhr.open("PUT", "https://timeline-api.rebble.io/v1/user/pins/" + pinid, true)
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.setRequestHeader("X-User-Token", token);
-            pintime = item["date"].split("/")[2] + "-" + item["date"].split("/")[1] + "-" + item["date"].split("/")[1]
+            pintime = item["date"].split("/")[2] + "-" + item["date"].split("/")[1] + "-" + item["date"].split("/")[0]
             icon = timelineicons[item[getdefaultpoint()]["wx_icon"].replace(".gif", "")] !== undefined ? timelineicons[item[getdefaultpoint()]["wx_icon"].replace(".gif", "")] : "TIMELINE_SUN"
 
             var pinobject = {
                 "id": pinid,
-                "time": pintime + "T" + item["time"] + ":00Z",
+                "time": pintime + "T" + dayfixed.format("HH:mm") + ":00Z",
                 "duration": 60,
                 "layout": {
                     "type": "weatherPin",
@@ -344,6 +349,59 @@ Pebble.addEventListener("ready", function () {
         xhr.send(null)
     }
 
+    function getresortinfo(resortname, callback) {
+
+        text = ""
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "https://liftie.info/api/resort/" + resortname, true)
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE) {
+                if (xhr.status === 200) {
+                    var obj = JSON.parse(xhr.responseText)
+                    if (obj["open"]) {
+                        text = text + "Status: open"
+                    } else {
+                        text = text + "Status: closed"
+                    }
+                    text = text + "\nLifts:"
+                    text = text + "\n" + obj["lifts"]["stats"]["open"] + " open (" + obj["lifts"]["stats"]["percentage"]["open"] + "%)"
+                    text = text + "\n" + obj["lifts"]["stats"]["closed"] + " closed (" + obj["lifts"]["stats"]["percentage"]["closed"] + "%)"
+
+                    callback(text)
+                } else {
+                    callback("App version: 1.0")
+                }
+            }
+        }
+        xhr.send(null)
+
+    }
+
+    function getresortlifs(resortname) {
+        var liftsmenu = new UI.Menu({
+            backgroundColor: "black",
+            textColor: "white",
+            highlightBackgroundColor: Feature.color('cyan', 'white'),
+            highlightTextColor: "black",
+        });
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "https://liftie.info/api/resort/" + resortname, true)
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE) {
+                if (xhr.status === 200) {
+                    var obj = JSON.parse(xhr.responseText)
+                    for (var i = 0, len = Object.keys(obj["lifts"]["status"]).length; i < len; ++i) {
+                        liftsmenu.item(0, i, {
+                            title: Object.keys(obj["lifts"]["status"])[i], subtitle: obj["lifts"]["status"][Object.keys(obj["lifts"]["status"])[i]]
+                        });
+                    }
+                    liftsmenu.show()
+                }
+            }
+        }
+        xhr.send(null)
+
+    }
     function loaddata() {
         var xhr = new XMLHttpRequest()
         xhr.open("GET", "https://api.weatherunlocked.com/api/resortforecast/" + Settings.option('resortid') + "?app_id=" + Settings.option('apiid') + "&app_key=" + Settings.option('apikey') + "&hourly_interval=6&num_of_days=" + Settings.option('daystoshow'), true)
@@ -438,22 +496,34 @@ Pebble.addEventListener("ready", function () {
         });
         forecast.on('select', function (e) {
             if (e.sectionIndex == 0) {
-                var resortinfo = new UI.Card({
-                    title: "Resort info",
-                    body: "Name: " + obj["name"],
-                    subtitleColor: "indigo",
-                    bodyColor: Feature.color("cyan", "white"),
-                    titleColor: "white",
-                    backgroundColor: "black",
-                    action: {
-                        select: 'images/timelineicon.png',
-                        backgroundColor: "white"
-                    }
-                });
-                resortinfo.on('click', 'select', function () {
-                    pushnextday();
-                });
-                resortinfo.show();
+                resortname = obj["name"]
+                if (Settings.option('resortname') != "") {
+                    resortname = Settings.option('resortname')
+                }
+
+                getresortinfo(resortname, function (data) {
+                    var resortinfo = new UI.Card({
+                        title: obj["name"],
+                        body: data,
+                        bodyColor: "white",
+                        titleColor: "white",
+                        backgroundColor: "black",
+                        action: {
+                            up: 'images/lifticon.png',
+                            select: 'images/timelineicon.png',
+                            backgroundColor: "white"
+                        },
+                        style: "small"
+                    });
+                    resortinfo.on('click', 'select', function () {
+                        pushnextday();
+                    });
+                    resortinfo.on('click', 'up', function () {
+                        getresortlifs(resortname)
+                    })
+                    resortinfo.show();
+                })
+
             } else {
                 sectiondaykey = makesections(Object.keys(forecastitems))[e.sectionIndex]
                 item = forecastitems[sectiondaykey["title"]][e.itemIndex]
