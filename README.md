@@ -28,7 +28,7 @@ Go to [weatherunlocked.com](developer.weatherunlocked.com) and register for an a
 -   [x] Timeline support: push next day to timeline
 -   [ ] Glances: push next hour to glance (let user select which data to push)
 -   [x] Select between imperial and metric (metric is now hard coded)
--   [X] Look for API which serves Lift status (liftie.io ?)
+-   [X] Look for API which serves Lift status (liftie.info ?)
 -   [x] Testing with Pebble Steel and Pebble Time 2
 
 ## Icons
