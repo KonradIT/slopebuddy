@@ -88,8 +88,8 @@ module.exports = [
 			{
 				"type": "input",
 				"appKey": "resortname",
-				"label": "Liftie.io resort name",
-				"label": "OPTIONAL: Add your resort name from liftie.io to get lift information",
+				"label": "Liftie.info resort name",
+				"label": "OPTIONAL: Add your resort name from liftie.info to get lift information",
 			},
 			{
 				"type": "submit",
